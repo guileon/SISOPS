@@ -9,19 +9,21 @@ int mv(int page, int *frame);
 int mv_stop(void);
 
 
-int number_pages_in_memory=0;
-int max_memory;
-int max_pages;
-pagelist * memory = NULL;
-pagelist * disk = NULL;
-
-
 typedef struct pagelist
 {
 	int page;
 	int frame;
 	struct pagelist * next;
 } pagelist;
+
+int number_pages_in_memory=0;
+int max_memory;
+int max_pages;
+pagelist * memory;
+pagelist * disk;
+
+
+
 
 pagelist * insert(pagelist* list, int _page, int _frame) // insere um elemento na última posição da lista
 {
@@ -53,11 +55,13 @@ pagelist * insert(pagelist* list, int _page, int _frame) // insere um elemento n
 void print(pagelist* list) // imprime a lista
 {
 	pagelist * p1 = list;
+	printf("\nImprimindo Lista:\n");
 	while(p1!=NULL)
 	{
 		printf("%d\n",p1->page);
 		p1 = p1->next;
 	}
+	printf("\n...Fim da Impressao\n");
 }
 
 pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // remove o primeiro elemento da lista
@@ -121,10 +125,14 @@ BOOL is_in_memory(int _page) // testa se a página de número _page está na lista
 
 BOOL is_memory_full() // testa se a memória está cheia
 {
+    BOOL retvalue;
     if(number_pages_in_memory < max_memory)
-        return FALSE;
-    else
-        return TRUE;
+    {
+        retvalue = FALSE;
+    }else
+        retvalue = TRUE;
+
+    return retvalue;
 }
 
 void insert_in_memory_in_frame(int page, int frame) // insere a página de número page no frame;
@@ -180,10 +188,13 @@ int insert_in_memory(int _page) // se a memória não está cheia, coloca a pagina 
 
 int mv_start(int npages, int nframes)
 {
+    disk = NULL;
+    memory = NULL;
     int i=0;
     for (i=0 ; i<npages ; i++)
-        disk = insert_in_disk(i);
+        insert_in_disk(i);
     max_memory = nframes;
+    return 0;
 }
 
 int mv(int page, int *frame)
@@ -199,12 +210,28 @@ int mv_stop(void)
 {
     free_all(memory);
     free_all(disk);
+    return 0;
 }
 
 int main()
 {
+    int f;
+    mv_start(5, 3);
+    print(disk);
+    print(memory);
 
+    mv(2,&f);
+    printf("%d\n",f);
+    mv(1,&f);
+    printf("%d\n",f);
+    mv(4,&f);
+    printf("%d\n",f);
+    mv(3,&f);
+    printf("%d\n",f);
 
+    print(disk); // 0 2
+    print(memory); // 1 4 3
+    mv_stop();
 
 }
 
