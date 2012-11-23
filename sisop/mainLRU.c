@@ -77,10 +77,8 @@ pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // re
     int max_count=0;
     while(p1!=NULL)
     {
-        //printf("%d > %d??\n",p1->count,max_count);
         if (p1->count > max_count)
         {
-            //printf("%d > %d\n",p1->count,max);
             max_count = p1->count;
             before_max = p0;
             max = p1;
@@ -101,7 +99,7 @@ pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // re
 	return list;
 }
 
-pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
+void free_all(pagelist * list) // desaloca o ultimo elemento da lista
 {
     pagelist * p1 = NULL;
     pagelist * p2 = list;
@@ -113,8 +111,6 @@ pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
         if(p1)
             free(p1);
     }
-    free(p1);
-    return NULL;
 }
 
 pagelist * inc_count(pagelist * list)
@@ -264,17 +260,13 @@ int main()
 
 
     mv(2,&f);
-    print(memory);
-    getchar();
+
     mv(1,&f);
-    print(memory);
-    getchar();
+
     mv(4,&f);
-    print(memory);
-    getchar();
+
     mv(2,&f);
-    print(memory);
-    getchar();
+
     mv(3,&f);
 
 

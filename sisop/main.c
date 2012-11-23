@@ -75,7 +75,7 @@ pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // re
 	return p1;
 }
 
-pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
+void free_all(pagelist * list) // desaloca o ultimo elemento da lista
 {
     pagelist * p1 = NULL;
     pagelist * p2 = list;
@@ -88,7 +88,7 @@ pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
             free(p1);
     }
     free(p1);
-    return NULL;
+
 }
 
 
