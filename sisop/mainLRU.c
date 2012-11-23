@@ -13,6 +13,7 @@ typedef struct pagelist
 {
 	int page;
 	int frame;
+	int count;
 	struct pagelist * next;
 } pagelist;
 
@@ -32,6 +33,7 @@ pagelist * insert(pagelist* list, int _page, int _frame) // insere um elemento n
 	pagelist * new = (pagelist*)malloc(sizeof(pagelist));
 	new->page = _page;
 	new->frame = _frame;
+	new->count = 0;
 	new->next = NULL;
 
 	if(list == NULL)
@@ -59,7 +61,7 @@ void print(pagelist* list) // imprime a lista
 	printf("\nImprimindo Lista:\n");
 	while(p1!=NULL)
 	{
-		printf("%d\n",p1->page);
+		printf("%d - %d\n",p1->page,p1->count);
 		p1 = p1->next;
 	}
 	printf("\n...Fim da Impressao\n");
@@ -67,12 +69,37 @@ void print(pagelist* list) // imprime a lista
 
 pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // remove o primeiro elemento da lista
 {
-    pagelist * p1;
-	*page_number = list->page;
-	*frame_number = list->frame;
-	p1 = list->next;
-	free(list);
-	return p1;
+
+    pagelist * p0 = NULL;
+    pagelist * p1 = list;
+    pagelist * before_max;
+    pagelist * max;
+    int max_count=0;
+
+    while(p1!=NULL)
+    {
+        if (p1->count > max)
+        {
+            max_count = p1->count;
+            before_max = p0;
+            max = p1;
+        }
+        p0 = p1;
+        p1 = p1->next;
+    }
+    getchar();
+    if(max!=NULL)
+        printf("max = %d\n",max->page);
+
+    *page_number = max->page;
+    *frame_number = max->frame;
+    getchar();
+    if (before_max!=NULL)
+        before_max->next = max->next;
+    else
+        list = max->next;
+	free(max);
+	return list;
 }
 
 pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
@@ -91,15 +118,27 @@ pagelist * free_all(pagelist * list) // desaloca o ultimo elemento da lista
     return NULL;
 }
 
-
+pagelist * inc_count(pagelist * list)
+{
+    pagelist * p1 = list;
+    while(p1 != NULL)
+    {
+        p1->count++;
+        p1 = p1->next;
+    }
+}
 
 int get_frame(int page) // retorna o a frame que contém a página de número page
 {
     pagelist * p1 = memory;
-    while(p1!=NULL)
+    while(p1)
     {
         if (p1->page == page)
+        {
+            p1->count = 0;
             return p1->frame;
+        }
+
     }
 }
 
@@ -114,7 +153,7 @@ BOOL is_in_list(pagelist * list, int page_number) // testa se a página de número
 			retvalue = TRUE;
 		p1 = p1->next;
 	}
-	return(retvalue);
+    return(retvalue);
 }
 
 
@@ -176,6 +215,7 @@ int insert_in_memory(int _page) // se a memória não está cheia, coloca a pagina 
     }
     else
     {
+
         int pn,fn;
         memory = _remove(memory, &pn, &fn);
         memory = insert(memory,_page,fn);
@@ -200,6 +240,7 @@ int mv_start(int npages, int nframes)
 
 int mv(int page, int *frame)
 {
+        memory = inc_count(memory);
         if(is_in_memory(page))
             *frame = get_frame(page);
         else
@@ -225,7 +266,7 @@ int main()
     printf("%d\n",f);
     mv(1,&f);
     printf("%d\n",f);
-    mv(2,&f);
+    mv(4,&f);
     printf("%d\n",f);
     mv(3,&f);
     printf("%d\n",f);
