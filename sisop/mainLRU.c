@@ -72,10 +72,9 @@ pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // re
 
     pagelist * p0 = NULL;
     pagelist * p1 = list;
-    pagelist * before_max;
-    pagelist * max;
+    pagelist * before_max = NULL;
+    pagelist * max = NULL;
     int max_count=0;
-
     while(p1!=NULL)
     {
         if (p1->count > max)
@@ -87,13 +86,13 @@ pagelist * _remove(pagelist * list, int * page_number, int * frame_number) // re
         p0 = p1;
         p1 = p1->next;
     }
-    getchar();
-    if(max!=NULL)
-        printf("max = %d\n",max->page);
+
 
     *page_number = max->page;
     *frame_number = max->frame;
+
     getchar();
+
     if (before_max!=NULL)
         before_max->next = max->next;
     else
@@ -126,6 +125,7 @@ pagelist * inc_count(pagelist * list)
         p1->count++;
         p1 = p1->next;
     }
+    return list;
 }
 
 int get_frame(int page) // retorna o a frame que contém a página de número page
@@ -262,14 +262,12 @@ int main()
     print(disk);
     print(memory);
 
+
     mv(2,&f);
-    printf("%d\n",f);
     mv(1,&f);
-    printf("%d\n",f);
     mv(4,&f);
-    printf("%d\n",f);
     mv(3,&f);
-    printf("%d\n",f);
+
 
     print(disk); // 0 2
     print(memory); // 1 4 3

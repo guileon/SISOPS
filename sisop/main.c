@@ -233,6 +233,7 @@ int main()
     print(disk); // 0 2
     print(memory); // 1 4 3
     mv_stop();
+    getchar();
 
 }
 
